@@ -7,7 +7,7 @@ namespace DAL
     {
     public class MyEventsDAL
         {
-        public IEnumerable<Event> GetMyEvents(string userEmail)
+        public IEnumerable<Event> GetMyEvents(string userName)
             {
 
 
@@ -15,11 +15,11 @@ namespace DAL
                 {
 
 
-                User user = (from u in db.Users
-                             where u.EmailId == userEmail
-                             select u).ToList().First();
+                var evt = (from e in db.Events
+                             where e.UserId == userName
+                             select e).ToList();
 
-                return user.Events;
+                return evt;
                 }
 
             }

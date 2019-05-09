@@ -6,7 +6,7 @@ using BL;
 using System.Linq;
 namespace MVCAssignment.Validation
     {
-    public class UserValidator:ValidationAttribute
+    public class UserEmailValidator:ValidationAttribute
         {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
             {
@@ -15,9 +15,7 @@ namespace MVCAssignment.Validation
             var property2= validationContext.ObjectType.GetProperty("EmailId");
             string userName = (string)property1.GetValue(validationContext.ObjectInstance);
             string emailId=(string)property2.GetValue(validationContext.ObjectInstance);
-            var queryUserName = (from u in users
-                                where u.UserName.Equals(userName,System.StringComparison.OrdinalIgnoreCase)
-                                select u).ToList().Count;
+            
             var queryEmailId = (from u in users
                                where u.EmailId.Equals(emailId,System.StringComparison.OrdinalIgnoreCase)
                                select u).ToList().Count;
@@ -25,11 +23,7 @@ namespace MVCAssignment.Validation
 
             if (queryEmailId==0)
                 {
-                if (queryUserName!=0)
-                    {
-                    return new ValidationResult("" + validationContext.DisplayName + "already exists");
-                    }
-                else
+                
                     return ValidationResult.Success;
                 }
             else

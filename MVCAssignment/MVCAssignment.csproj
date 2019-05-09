@@ -158,8 +158,8 @@
     <Compile Include="Models\RegisterUserModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Validation\EventValidator.cs" />
-    <Compile Include="Validation\UserValidator.cs" />
+    <Compile Include="Validation\UserNameValidator.cs" />
+    <Compile Include="Validation\UserEmailValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-1.1.0.css" />

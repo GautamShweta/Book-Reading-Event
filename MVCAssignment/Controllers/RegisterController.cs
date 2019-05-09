@@ -18,7 +18,12 @@ namespace MVCAssignment.Controllers
         public ActionResult RegisterPost(RegisterUserModel userModel)
             {
             User user = new RegisterUserModelToUserHelper().RegisterUserModelToUserMapping(userModel);
-            return new RegisterUserBL().AddUser(user) ? RedirectToAction("Login", "Login") : RedirectToAction("Register");
+            if (ModelState.IsValid)
+                {
+                new RegisterUserBL().AddUser(user);
+                return RedirectToAction("Login", "Login");
+                }
+            return View();
 
             }
     }

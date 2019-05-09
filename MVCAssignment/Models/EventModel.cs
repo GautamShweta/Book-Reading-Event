@@ -15,7 +15,7 @@ namespace MVCAssignment.Models
         
         [Display(Name ="Title")]
         [Required]
-        [EventValidator]
+        
         public string Title { get; set; }
 
         [Display(Name = "Date")]
@@ -31,7 +31,7 @@ namespace MVCAssignment.Models
         [Display(Name = "Start Time")]
         [Required]
         [DataType(DataType.Time)]
-        [DisplayFormat(DataFormatString = "{0:HH:mm }", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime StartTime { get; set; }
 
         [Required]

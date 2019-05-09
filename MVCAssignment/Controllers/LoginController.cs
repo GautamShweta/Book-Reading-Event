@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Web.Mvc;
 
 using MVCAssignment.Models;
@@ -24,11 +24,15 @@ namespace MVCAssignment.Controllers
             if (userValidation.UserExists(new UserModelToUserHelper().UserModelToUserMapping(user)))
                 {
                 FormsAuthentication.SetAuthCookie(user.UserName, false);
-               
-               
+                return RedirectToAction("About", "Home");
+
+                }
+            else
+                {
+                ViewBag.Message = "Invalid UserName or Password";
+                return View();
                 }
             
-            return RedirectToAction("About", "Home");
 
 
             }

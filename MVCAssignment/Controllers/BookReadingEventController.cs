@@ -5,22 +5,22 @@ using Shared;
 using MVCAssignment.Helper;
 using System.Collections.Generic;
 using System;
-using System.Linq;
+
 namespace MVCAssignment.Controllers
     {
     public class BookReadingEventController : Controller
     {
 
-        string UserEmail;
-        public string GetUserEmail
+        string UserName;
+        public string GetUserName
             {
             get
                 {
                 if (User.Identity.IsAuthenticated)
                     {
-                    UserEmail = new UserEmailBL().GetUserEmail(User.Identity.Name);
+                    UserName = User.Identity.Name;
                     }
-                return UserEmail;
+                return UserName;
                 }
                
             }
@@ -38,16 +38,16 @@ namespace MVCAssignment.Controllers
         
         public ActionResult MyEvents()
             {
-            string UserEmail=GetUserEmail;
+            string UserName=GetUserName;
             MyEventsBL getMyEventsBL = new MyEventsBL();
-            var myEvents = getMyEventsBL.GetMyEvents(UserEmail);
+            var myEvents = getMyEventsBL.GetMyEvents(UserName);
             return View(new EventToEventModelHelper().GetEventModels(myEvents));
             }
 
 
        public ActionResult EventsInvitedTo()
             {
-            string UserEmail = GetUserEmail;
+            string UserEmail = new UserEmailBL().GetUserEmail(User.Identity.Name);
             InvitedToBL invitedToBL = new InvitedToBL();
             var invitedEvents = invitedToBL.GetInvitedTo(UserEmail);
             return View(new EventToEventModelHelper().GetEventModels(invitedEvents));
@@ -65,7 +65,7 @@ namespace MVCAssignment.Controllers
         [ActionName("CreateEvent")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateEventPost([Bind(Include = "Title, Date, StartTime,Duration,OtherDetails,InviteByEmail,Location,Description")]EventModel model)
+        public ActionResult CreateEventPost([Bind(Include = "Title, Date, StartTime,Duration,OtherDetails,Type,InviteByEmail,Location,Description")]EventModel model)
             {
                 if(ModelState.IsValid)
                 {
@@ -73,11 +73,13 @@ namespace MVCAssignment.Controllers
                 
                 Event evt = new EventModelToEventHelper().EventModelToEventMapping(model);
 
-                new CreateEventBL().CreateEvent(evt);
+                if(new CreateEventBL().CreateEvent(evt))
 
                 return RedirectToAction("About","Home");
+
                 
                 }
+            ViewBag.Message = "Title Already exists";
             return View(model);
 
             }
@@ -100,7 +102,10 @@ namespace MVCAssignment.Controllers
             ViewBag.DisplayOtherDetails = (eventModel.OtherDetails != null) ? true : false;
             ViewBag.DisplayDuration = (eventModel.Duration != null) ? true : false;
             ViewBag.DisplayCount = (eventModel.Count != 0) ? true : false;
-            ViewBag.DisplayEditLink = ((eventModel.Date < DateTime.Now.Date)||(eventModel.StartTime.TimeOfDay <= DateTime.Now.TimeOfDay)) ? false : true;
+            ViewBag.DisplayEditLink = ((eventModel.Date.Date > DateTime.Now.Date.Date)
+                || ((eventModel.Date.Date == DateTime.Now.Date.Date) && (eventModel.StartTime.Date.TimeOfDay > DateTime.Now.Date.TimeOfDay)))
+                &&(eventModel.UserId.Equals(User.Identity.Name,StringComparison.OrdinalIgnoreCase)||User.IsInRole("Admin"))
+                ? true : false;
             
             return View(eventModel);
             }
@@ -124,10 +129,10 @@ namespace MVCAssignment.Controllers
                 {
                 EditEventBL editEvent = new EditEventBL();
                 editEvent.EditEvent(new EventModelToEventHelper().EventModelToEventMapping(eventModel));
-                return View(eventModel);
+                return RedirectToAction("ViewEvent",new { eventModel.EventId});
                 }
             else
-                return View(RedirectToAction("About", "Home"));
+                return View();
             
             }
 

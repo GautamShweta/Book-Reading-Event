@@ -4,13 +4,17 @@ namespace MVCAssignment.Models
     {
     public class RegisterUserModel
         {
-        [UserValidator]
+        [Required]
+        
+        [UserNameValidator]
         public string UserName { get; set; }
 
-        [UserValidator]
+        [Required]
+        [UserEmailValidator]
         [EmailAddress]
         public string EmailId { get; set; }
 
+        [Required]
         [MinLength(5)]
         public string Password { get; set; }
         }

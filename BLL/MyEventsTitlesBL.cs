@@ -6,12 +6,12 @@ namespace BL
     {
     public class MyEventsBL
         {
-        public IEnumerable<Event> GetMyEvents(string userEmail)
+        public IEnumerable<Event> GetMyEvents(string userName)
             {
            
                 MyEventsDAL getMyEventsDAL = new MyEventsDAL();
 
-                IEnumerable<Event> myEvents = getMyEventsDAL.GetMyEvents(userEmail);
+                IEnumerable<Event> myEvents = getMyEventsDAL.GetMyEvents(userName);
                 
                 return myEvents;
                 

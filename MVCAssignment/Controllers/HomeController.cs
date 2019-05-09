@@ -16,31 +16,33 @@ namespace MVCAssignment.Controllers
 
         public ActionResult About()
             {
-
+            IEnumerable<Event> upcomingEvents;
             IEnumerable<Event> events = new AllEventsBL().GetEvents;
             IEnumerable<Event> missedEvents;
             if (User.Identity.IsAuthenticated)
                 {
-                missedEvents = events.Where(e => (e.Date < DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay < DateTime.Now.TimeOfDay)));
-               }
+                upcomingEvents = events.Where(e => (e.Date > DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay > DateTime.Now.TimeOfDay))).ToList();
+                upcomingEvents = upcomingEvents.Where(e => (e.Type==EventType.PRIVATE &&e.UserId == User.Identity.Name) ||(e.Type==EventType.PUBLIC)).ToList();
+                missedEvents = events.Where(e => (e.Date < DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay < DateTime.Now.TimeOfDay))).ToList();
+                missedEvents = missedEvents.Where(e => (e.Type == EventType.PRIVATE && e.UserId == User.Identity.Name) || (e.Type == EventType.PUBLIC)).ToList();
+                }
             else
                 {
-                missedEvents = events.Where(e => (e.Date < DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay < DateTime.Now.TimeOfDay)));
-                missedEvents = missedEvents.Where(e => e.Type == EventType.PUBLIC);
-               
+                events = events.Where(x => x.Type == EventType.PUBLIC);
+                missedEvents = events.Where(e => (e.Date < DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay < DateTime.Now.TimeOfDay))).ToList();
+                //missedEvents = missedEvents.Where(e => e.Type == EventType.PUBLIC).ToList();
+                upcomingEvents = events.Where(e => (e.Date > DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay > DateTime.Now.TimeOfDay))).ToList();
+                upcomingEvents = upcomingEvents.Where(e => e.Type == EventType.PUBLIC).ToList();
+
                 }
 
 
 
-            IEnumerable<Event> upcomingEvents;
             if (User.Identity.IsAuthenticated)
                 {
-                    upcomingEvents= events.Where(e => (e.Date > DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay > DateTime.Now.TimeOfDay)));
                 }
             else
                 {
-                upcomingEvents = events.Where(e => (e.Date > DateTime.Now.Date) || ((e.Date == DateTime.Now.Date) && (e.Date.TimeOfDay > DateTime.Now.TimeOfDay)));
-                upcomingEvents = upcomingEvents.Where(e => e.Type == EventType.PUBLIC);
                
                 }
             List<IEnumerable<EventModel>> eventModels = new List<IEnumerable<EventModel>>();

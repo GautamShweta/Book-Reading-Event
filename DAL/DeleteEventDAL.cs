@@ -14,6 +14,7 @@ namespace DAL
                              select e).ToList().First();
 
                 context.Events.Remove(result);
+                context.SaveChanges();
                 }
             }
         }
